@@ -1,27 +1,36 @@
 ﻿using System;
 using System.Collections;
-
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Xml.Serialization;
+using static System.Console;
 namespace Long_Arithmetic
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            Console.Read();
+            StaticManualTest(8, 5);
+            Read();
         }
 
+        static void StaticManualTest(LongInt n1, LongInt n2)
+        {
+            WriteLine($"n1 = {n1}, n2 = {n2}");
+            WriteLine($"n1 + n2 = {n1} + {n2} = {n1 + n2}");
+            WriteLine($"n1 - n2 = {n1} - {n2} = {n1 - n2}");
+            WriteLine($"n1 * n2 = {n1} * {n2} = {n1 * n2}");
+            WriteLine($"n1 / n2 = {n1} / {n2} = {n1 / n2}");
+            WriteLine($"n1 % n2 = {n1} % {n2} = {n1 % n2}");
+        }
     }
 
     class LongInt
     {
         private BitArray Bits;
 
-        public LongInt(int order = 1)
-        {
-            Bits = new BitArray(order);
-        }
-
+        public LongInt(long value=0) => SetValue(value);
+        
         public void SetValue(long val)
         {
             const int mask = 1;
@@ -43,9 +52,34 @@ namespace Long_Arithmetic
             return a;
         }
 
+        public static LongInt operator -(LongInt a, LongInt b)
+        {
+            return a;
+        }
+        public static LongInt operator *(LongInt a, LongInt b)
+        {
+            return a;
+        }
+        public static LongInt operator /(LongInt a, LongInt b)
+        {
+            return a;
+        }
+        public static LongInt operator %(LongInt a, LongInt b)
+        {
+            return a;
+        }
+
+        public static implicit operator LongInt(int v) => new LongInt(v);
+
         public override string ToString()
         {
-            return base.ToString();
+            BigInteger sum = 0;
+
+            for (int i = Bits.Length - 1, exp = 0; i >= 0; i--, exp++)
+            {
+                sum += Bits[i] ? BigInteger.Pow(2, exp) : 0;
+            }
+            return sum.ToString();
         }
     }
 }
