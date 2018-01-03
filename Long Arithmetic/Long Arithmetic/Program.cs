@@ -12,35 +12,32 @@ namespace Long_Arithmetic
         {
             StaticManualTest(8, 5);
             StaticManualTest(100, 6);
-
+            StaticManualTest(3, 3);
             Read();
         }
 
         static void StaticManualTest(LongInt n1, LongInt n2)
         {
+            WriteLine("----------");
             WriteLine($"n1 = {n1}, n2 = {n2}");
-            WriteLine($"n1 + n2 = {n1} + {n2} = {n1 + n2}");
-            WriteLine($"n1 - n2 = {n1} - {n2} = {n1 - n2}");
-            WriteLine($"n1 * n2 = {n1} * {n2} = {n1 * n2}");
-            WriteLine($"n1 / n2 = {n1} / {n2} = {n1 / n2}");
-            WriteLine($"n1 % n2 = {n1} % {n2} = {n1 % n2}");
-            WriteLine($"n1 > n2 = {n1} > {n2} = {n1 > n2}");
-            WriteLine($"n1 < n2 = {n1} < {n2} = {n1 < n2}");
-            WriteLine($"n1 >= n2 = {n1} >= {n2} = {n1 >= n2}");
-            WriteLine($"n1 <= n2 = {n1} <= {n2} = {n1 <= n2}");
-            WriteLine($"n1 == n2 = {n1} == {n2} = {n1 == n2}");
-            WriteLine($"n1 != n2 = {n1} != {n2} = {n1 != n2}");
-
-
+            WriteLine($"{n1} + {n2} = {n1 + n2}");
+            WriteLine($"{n1} - {n2} = {n1 - n2}");
+            WriteLine($"{n1} * {n2} = {n1 * n2}");
+            WriteLine($"{n1} / {n2} = {n1 / n2}");
+            WriteLine($"{n1} % {n2} = {n1 % n2}");
+            WriteLine($"{n1} > {n2} = {n1 > n2}");
+            WriteLine($"{n1} < {n2} = {n1 < n2}");
+            WriteLine($"{n1} >= {n2} = {n1 >= n2}");
+            WriteLine($"{n1} <= {n2} = {n1 <= n2}");
+            WriteLine($"{n1} == {n2} = {n1 == n2}");
+            WriteLine($"{n1} != {n2} = {n1 != n2}");
         }
     }
 
     class LongInt: IComparable
     {
         private BitArray Bits;
-
         public LongInt(long value=0) => SetValue(value);
-        
         public void SetValue(long val)
         {
             const int mask = 1;
@@ -50,13 +47,11 @@ namespace Long_Arithmetic
                 binarystr += (val & mask); //+ binarystr;
                 val = val >> 1;
             }
-            
             Bits = new BitArray(binarystr.Length);
             for (int i = 0; i < binarystr.Length; i++)
             {
                 Bits[i] = binarystr[i] == '1';
             }
-            
         }
 
         public static LongInt operator +(LongInt a, LongInt b)
@@ -80,9 +75,9 @@ namespace Long_Arithmetic
                 switch (value)
                 { 
                     case 0: res.Bits[i] = false; carry = false; break;
-                    case 1: res.Bits[i] = true; carry = false; break;
+                    case 1: res.Bits[i] = true;  carry = false; break;
                     case 2: res.Bits[i] = false; carry = true; break;
-                    case 3: res.Bits[i] = true; carry = true; break;
+                    case 3: res.Bits[i] = true;  carry = true; break;
                 }
             }
             return res;
@@ -115,6 +110,9 @@ namespace Long_Arithmetic
         public static bool operator <(LongInt a, LongInt b) => a.CompareTo(b) < 0;
         public static bool operator >=(LongInt a, LongInt b) => a.CompareTo(b) >= 0;
         public static bool operator <=(LongInt a, LongInt b) => a.CompareTo(b) <= 0;
+        public static bool operator ==(LongInt a, LongInt b) => a.CompareTo(b) == 0;
+        public static bool operator !=(LongInt a, LongInt b) => a.CompareTo(b) != 0;
+
 
         //Convert int to LongInt implicitly
         public static implicit operator LongInt(int v) => new LongInt(v);
@@ -135,8 +133,8 @@ namespace Long_Arithmetic
         {
             return 0;
         }
-    
 
+        //Naive Multiplication alg - O(n^2)
         private static LongInt NaiveMult(LongInt a, LongInt b)
         {
             int l = a.Bits.Length;
@@ -144,7 +142,6 @@ namespace Long_Arithmetic
             LongInt res = new LongInt();
             res.Bits = new BitArray(l + r);
             bool carry = false;
-
             for (int i = 0; i < l; i++)
             {
                 carry = false;
@@ -161,9 +158,33 @@ namespace Long_Arithmetic
             return res;
         }
 
+        //IComparable nonstatic implementation
         public int CompareTo(object obj)
         {
-            return 0;
+            LongInt snd = (LongInt)obj;
+            if (Bits.Length > snd.Bits.Length)
+            {
+                return 1;
+            }
+            else if (Bits.Length < snd.Bits.Length)
+            {
+                return -1;
+            }
+            else
+            {
+                int maxlenght = Math.Max(Bits.Length, snd.Bits.Length);
+                for (int i = maxlenght - 1; i >= 0; i--)
+                {
+                    int aval = i >= Bits.Length ? 0 : (Bits[i] ? 1 : 0);
+                    int bval = i >= snd.Bits.Length ? 0: (snd.Bits[i] ? 1 : 0);
+                    if (aval > bval)
+                        return 1;
+                    else if (aval < bval)
+                        return -1;
+                }
+                return 0;
+            }
+
         }
     }
 }
