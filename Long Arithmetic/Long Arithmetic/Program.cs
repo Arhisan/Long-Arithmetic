@@ -24,10 +24,18 @@ namespace Long_Arithmetic
             WriteLine($"n1 * n2 = {n1} * {n2} = {n1 * n2}");
             WriteLine($"n1 / n2 = {n1} / {n2} = {n1 / n2}");
             WriteLine($"n1 % n2 = {n1} % {n2} = {n1 % n2}");
+            WriteLine($"n1 > n2 = {n1} > {n2} = {n1 > n2}");
+            WriteLine($"n1 < n2 = {n1} < {n2} = {n1 < n2}");
+            WriteLine($"n1 >= n2 = {n1} >= {n2} = {n1 >= n2}");
+            WriteLine($"n1 <= n2 = {n1} <= {n2} = {n1 <= n2}");
+            WriteLine($"n1 == n2 = {n1} == {n2} = {n1 == n2}");
+            WriteLine($"n1 != n2 = {n1} != {n2} = {n1 != n2}");
+
+
         }
     }
 
-    class LongInt
+    class LongInt: IComparable
     {
         private BitArray Bits;
 
@@ -53,7 +61,31 @@ namespace Long_Arithmetic
 
         public static LongInt operator +(LongInt a, LongInt b)
         {
-            return a;
+            int l = a.Bits.Length;
+            int r = b.Bits.Length;
+            LongInt res = new LongInt();
+            //Lenght of the result BitArray
+            int n = Math.Max(l, r) + 1;
+            res.Bits = new BitArray(n);
+            bool carry = false;
+
+            for (int i = 0; i < n; i++)
+            {
+                //Automatical 0-filling and out-of-range prevention
+                int aval = (i < l ? (a.Bits[i] ? 1 : 0) : 0);
+                int bval = (i < r ? (b.Bits[i] ? 1 : 0) : 0);
+                int cval = (carry ? 1 : 0);
+                
+                int value = aval + bval + cval;
+                switch (value)
+                { 
+                    case 0: res.Bits[i] = false; carry = false; break;
+                    case 1: res.Bits[i] = true; carry = false; break;
+                    case 2: res.Bits[i] = false; carry = true; break;
+                    case 3: res.Bits[i] = true; carry = true; break;
+                }
+            }
+            return res;
         }
 
         public static LongInt operator -(LongInt a, LongInt b)
@@ -79,8 +111,15 @@ namespace Long_Arithmetic
             return a;
         }
 
+        public static bool operator >(LongInt a, LongInt b) => a.CompareTo(b) > 0;
+        public static bool operator <(LongInt a, LongInt b) => a.CompareTo(b) < 0;
+        public static bool operator >=(LongInt a, LongInt b) => a.CompareTo(b) >= 0;
+        public static bool operator <=(LongInt a, LongInt b) => a.CompareTo(b) <= 0;
+
+        //Convert int to LongInt implicitly
         public static implicit operator LongInt(int v) => new LongInt(v);
 
+        //Transform number to "Human form"
         public override string ToString()
         {
             BigInteger sum = 0;
@@ -120,6 +159,11 @@ namespace Long_Arithmetic
                 res.Bits[i + r] ^= carry;
             }
             return res;
+        }
+
+        public int CompareTo(object obj)
+        {
+            return 0;
         }
     }
 }
