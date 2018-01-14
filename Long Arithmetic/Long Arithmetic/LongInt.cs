@@ -8,7 +8,7 @@ namespace Long_Arithmetic
     public class LongInt
     {
         //The greatest number of "digit"
-        private static long rank = 8;
+        private static int rank = 8;
         private List<int> digits = new List<int>{0};
         public LongInt(long value = 0) => SetValue(value);
         public void SetValue(long val)
@@ -16,7 +16,6 @@ namespace Long_Arithmetic
             long quotient;
             int i = 0;
             quotient = val;
-            
             while (quotient != 0)
 
             {
@@ -36,17 +35,96 @@ namespace Long_Arithmetic
             {
                 digits.RemoveRange(i,digits.Count-i);
             }*/
-            shrinkToFit();
+            ShrinkToFit();
+            /*
             Console.Write(val+": ");
             for (int j = digits.Count - 1; j >= 0; j--)
             {
                 Console.Write(digits[j]);
             }
-            Console.WriteLine();
+            Console.WriteLine();*/
 
         }
 
-        private void shrinkToFit()
+        //ADDITION
+        public static LongInt operator +(LongInt a, LongInt b)
+        {
+            int l = a.digits.Count;
+            int r = b.digits.Count;
+            LongInt res = new LongInt();
+            //Lenght of the result 
+            int length = Math.Max(l, r) + 1;
+            res.digits.Clear();
+            int carry = 0;
+            for (int i = 0; i < length; i++)
+            {
+                int adigit = i >= a.digits.Count ? 0 : a.digits[i];
+                int bdigit = i >= b.digits.Count ? 0 : b.digits[i];
+                res.digits.Add(bdigit + adigit + carry); // суммируем последние разряды чисел
+                carry = (res.digits[i] / rank); // если есть разряд для переноса, переносим его в следующий разряд
+                res.digits[i] %= rank; // если есть разряд для переноса он отсекается
+            }
+            return res;
+        }
+        public static LongInt operator -(LongInt a, LongInt b)
+        {
+            return a + b;
+        }
+        public static LongInt operator *(LongInt a, LongInt b)
+        {
+            return a + b;
+        }
+        public static LongInt operator /(LongInt a, LongInt b)
+        {
+            return a + b;
+        }
+        public static LongInt operator %(LongInt a, LongInt b)
+        {
+            return a + b;
+        }
+
+        //Convert int to LongIntBin implicitly
+        public static implicit operator LongInt(int v) => new LongInt(v);
+
+        public static bool operator >(LongInt a, LongInt b) => a.CompareTo(b) > 0;
+        public static bool operator <(LongInt a, LongInt b) => a.CompareTo(b) < 0;
+        public static bool operator >=(LongInt a, LongInt b) => a.CompareTo(b) >= 0;
+        public static bool operator <=(LongInt a, LongInt b) => a.CompareTo(b) <= 0;
+        public static bool operator ==(LongInt a, LongInt b) => a.CompareTo(b) == 0;
+        public static bool operator !=(LongInt a, LongInt b) => a.CompareTo(b) != 0;
+
+
+        //IComparable nonstatic implementation
+        public int CompareTo(object obj)
+        {
+            LongInt snd = (LongInt)obj;
+            if (digits.Count> snd.digits.Count)
+            {
+                return 1;
+            }
+            else if (digits.Count < snd.digits.Count)
+            {
+                return -1;
+            }
+            else
+            {
+                int maxlenght = Math.Max(digits.Count, snd.digits.Count);
+                for (int i = maxlenght - 1; i >= 0; i--)
+                {
+                    int aval = i >= digits.Count ? 0 : digits[i];
+                    int bval = i >= snd.digits.Count ? 0 : snd.digits[i];
+                    if (aval > bval)
+                        return 1;
+                    else if (aval < bval)
+                        return -1;
+                }
+                return 0;
+            }
+
+        }
+
+        //CUT ALL THE GREATEST ZEROS
+        private void ShrinkToFit()
         {
             for (int i = digits.Count - 1; i >= 0; i--)
             {
@@ -60,6 +138,17 @@ namespace Long_Arithmetic
                     break;
                 }
             }
+        }
+
+        //Transform number to "Human form"
+        public override string ToString()
+        {
+            BigInteger sum = 0;
+            for (int i = 0; i < digits.Count; i++)
+            {
+                sum += digits[i] * BigInteger.Pow(rank, i);
+            }
+            return sum.ToString();
         }
     }
 

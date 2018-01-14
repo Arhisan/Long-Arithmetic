@@ -11,15 +11,7 @@ namespace Long_Arithmetic
         private static LongIntBin ooo = 0;
         static void Main(string[] args)
         {
-
-            for (int i = 0; i < 320; i++)
-            {
-                new LongInt(i);
-            }
-            new LongInt(256);
-            new LongInt(264);
-
-            // StaticManualTest(8, 5);
+            StaticManualTest(8, 5);
             // StaticManualTest(5, 8);
 
             //  StaticManualTest(100, 6);
@@ -32,7 +24,7 @@ namespace Long_Arithmetic
             //  WriteLine(ooo);
             Read();
         }
-        /*
+        
         static void StaticManualTest(LongInt n1, LongInt n2)
         {
             WriteLine("----------");
@@ -56,7 +48,7 @@ namespace Long_Arithmetic
             }
             WriteLine($"Big Number {num}");
         }
-        */
+        
         static void StaticManualTestBin(LongIntBin n1, LongIntBin n2)
         {
             WriteLine("----------");
