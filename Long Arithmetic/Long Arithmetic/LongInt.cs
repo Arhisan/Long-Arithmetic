@@ -1,12 +1,66 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Long_Arithmetic
 {
     public class LongInt
     {
-        
+        //The greatest number of "digit"
+        private static long rank = 8;
+        private List<int> digits = new List<int>{0};
+        public LongInt(long value = 0) => SetValue(value);
+        public void SetValue(long val)
+        {
+            long quotient;
+            int i = 0;
+            quotient = val;
+            
+            while (quotient != 0)
+
+            {
+                if (i < digits.Count)
+                {
+                    digits[i++] = (int) (quotient % rank);
+                }
+                else
+                {
+                    digits.Add((int)(quotient % rank));
+                    i++;
+                }
+                quotient = quotient / rank;
+            }
+            /*
+            if (i < digits.Count && digits.Count != 1)
+            {
+                digits.RemoveRange(i,digits.Count-i);
+            }*/
+            shrinkToFit();
+            Console.Write(val+": ");
+            for (int j = digits.Count - 1; j >= 0; j--)
+            {
+                Console.Write(digits[j]);
+            }
+            Console.WriteLine();
+
+        }
+
+        private void shrinkToFit()
+        {
+            for (int i = digits.Count - 1; i >= 0; i--)
+            {
+                if (digits[i] != 0   && i!=0)
+                {
+                    if (i < digits.Count - 1)
+                    {
+                        break;
+                    }
+                    digits.RemoveRange(i+1,digits.Count-i-1);
+                    break;
+                }
+            }
+        }
     }
 
     class LongIntBin : IComparable
